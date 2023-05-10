@@ -9,15 +9,6 @@ module.exports = {
     ],
     theme: {
         extend: {
-            colors: {
-                'darkblue': '#0076a8',
-                'lightblue': '#00A7D8',
-                'orange': '#EBAB00',
-                'yellow': '#f7d917',
-                'lightgray': '#f2f2f2',
-                'darkgray': '#333333',
-                'copper': '#b87333'
-            },
             fontFamily: {
                 'sans': ['Oxygen', 'sans-serif']
             },
