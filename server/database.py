@@ -64,7 +64,7 @@ class Database:
         """
         Execute the sql statement
         :param sql: str
-        :param data: dict
+        :param data: dict, default None
         :return: Optional[List[tuple]]
         """
         if not self.cur:
