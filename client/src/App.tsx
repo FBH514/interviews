@@ -27,13 +27,14 @@ export default function App(): JSX.Element {
         return () => window.removeEventListener("keydown", handler);
     });
 
-    const {data: content} = useQuery<QuizProps[]>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT))
+    const {data: content} = useQuery<QuizProps[]>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT));
+    const {data: topics} = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS));
 
     function handleClick(): void {
         setShow(!show);
     }
 
-    function Close(): JSX.Element {
+    function Menu(): JSX.Element {
         return (
             show ?
                 (
@@ -53,8 +54,8 @@ export default function App(): JSX.Element {
         <div className={show ? ContainerClasses.PARENT_SHOW : ContainerClasses.PARENT}
              style={show ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateColumns: "1fr"}}
         >
-            <Close/>
-            {show ? <Navbar/> : <></>}
+            <Menu/>
+            {show ? <Navbar topics={topics}/> : <></>}
             <Quiz params={content}/>
         </div>
     );

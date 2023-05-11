@@ -1,39 +1,14 @@
 import {NavClasses} from "./Classes.tsx";
 
-export default function Navbar(): JSX.Element {
+export default function Navbar(props: {topics: string[] | undefined}): JSX.Element {
 
-    const data = [
-        {
-            name: "Python",
-        },
-        {
-            name: "Generic",
-        },
-        {
-            name: "Django",
-        },
-        {
-            name: "Flask",
-        },
-        {
-            name: "Postgres",
-        },
-        {
-            name: "MySQL",
-        },
-        {
-            name: "MongoDB",
-        }
-    ];
-
+    const topics = props.topics || []
 
     return (
         <nav className={NavClasses.PARENT}>
             <ul className={NavClasses.UL}>
-                {data.map((item, index) => (
-                    <li key={index} className={NavClasses.LI}>
-                        {item.name}
-                    </li>
+                {topics.map((item, index) => (
+                    <li key={index} className={NavClasses.LI}>{item}</li>
                 ))}
             </ul>
         </nav>

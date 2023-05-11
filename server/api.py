@@ -55,3 +55,15 @@ async def content(response: Response) -> list:
                 'answer': row[2]
             })
         return data
+
+
+# GET http://localhost:8000/interview/v1/content/topics
+@cache(15)
+@app.get(f"/{Project.NAME}/{Project.VERSION}/content/topics")
+async def topics(response: Response) -> list:
+    """"""
+    with Database(os.getenv("DB_NAME")) as db:
+        data = []
+        for row in db.execute(os.getenv("TOPICS")):
+            data.append(row[1])
+        return data
