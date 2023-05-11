@@ -2,6 +2,10 @@ import {QuizProps} from "./components/Interfaces.tsx";
 import {Endpoints, QueryKeys} from "./components/Endpoints.tsx";
 import {useQuery} from "react-query";
 import Quiz from "./components/Quiz.tsx";
+import Navbar from "./components/Navbar.tsx";
+import {useEffect, useState} from "react";
+import {ContainerClasses, NavClasses} from "./components/Classes.tsx";
+import {Nav} from "./components/Icons.tsx";
 
 async function GET(endpoint: string): Promise<any> {
     const response = await fetch(endpoint);
@@ -10,10 +14,47 @@ async function GET(endpoint: string): Promise<any> {
 
 export default function App(): JSX.Element {
 
+    const [show, setShow] = useState<boolean>(false);
+
+    useEffect(() => {
+        function handler(e: KeyboardEvent) {
+            if (e.key === "Escape") {
+                setShow(!show);
+            }
+        }
+
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+    });
+
     const {data: content} = useQuery<QuizProps[]>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT))
 
+    function handleClick(): void {
+        setShow(!show);
+    }
+
+    function Close(): JSX.Element {
+        return (
+            show ?
+                (
+                    <div className={NavClasses.MENU} onClick={handleClick}>
+                        <img src={Nav.CLOSE} alt={"close"} className={"p-2 bg-transparent"}/>
+                    </div>
+                ) : (
+                    <div className={NavClasses.MENU} onClick={handleClick}>
+                        <img src={Nav.OPEN} alt={"open"} className={"p-2 bg-stone-100 rounded-md shadow-lg"}/>
+                    </div>
+                )
+
+        );
+    }
+
     return (
-        <div className={"App flex items-center justify-center min-h-screen bg-gradient-to-br from-sky-300 to-purple-500"}>
+        <div className={show ? ContainerClasses.PARENT_SHOW : ContainerClasses.PARENT}
+             style={show ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateColumns: "1fr"}}
+        >
+            <Close/>
+            {show ? <Navbar/> : <></>}
             <Quiz params={content}/>
         </div>
     );

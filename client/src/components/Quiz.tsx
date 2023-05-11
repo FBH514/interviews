@@ -1,7 +1,7 @@
 import {QuizProps} from "./Interfaces.tsx";
 import {useCallback, useEffect, useState} from "react";
 import {Arrows} from "./Icons.tsx";
-import {Buttons} from "./Classes.tsx";
+import {ButtonCLasses} from "./Classes.tsx";
 
 function randomizeContent(data: QuizProps[]): void {
     if (!data) return;
@@ -49,25 +49,27 @@ export default function Quiz(props: { params: QuizProps[] | undefined }): JSX.El
     function handleNext(): void {
         const isLast = index === content.length - 1;
         isLast ? setIndex(0) : setIndex(index + 1);
+        if (show) setShow(!show)
     }
 
     function handlePrevious(): void {
         const isFirst = index === 0;
         isFirst ? setIndex(content.length - 1) : setIndex(index - 1);
+        if (show) setShow(!show)
     }
 
     return (
-        <main className={"grid grid-rows-2 gap-8 w-4/6 h-4/6"}>
+        <main className={"grid grid-rows-2 gap-8 w-4/6 h-4/6 justify-items-center"}>
             <section
                 className={"rounded-lg bg-gradient-to-br from-stone-200 to-stone-100 p-4 shadow-lg h-fit flex items-center justify-evenly gap-4"}>
-                <button className={Buttons.ARROW} onClick={handlePrevious}>
+                <button className={ButtonCLasses.ARROW} onClick={handlePrevious}>
                     <img src={Arrows.LEFT_ARROW} alt={"left arrow"}/>
                 </button>
                 <header className={"grid grid-cols-2 items-center gap-4 text-center w-full"} style={{gridTemplateColumns: "1fr fit-content(100%)"}}>
                     <h2 className={"text-2xl text-stone-700 font-bold"}>{content[index]?.question}</h2>
-                    <button className={Buttons.SHOW} onClick={handleClick}>{"Show"}</button>
+                    <button className={ButtonCLasses.SHOW} onClick={handleClick}>{"Show"}</button>
                 </header>
-                <button className={Buttons.ARROW} onClick={handleNext}>
+                <button className={ButtonCLasses.ARROW} onClick={handleNext}>
                     <img src={Arrows.RIGHT_ARROW} alt={"right arrow"}/>
                 </button>
             </section>

@@ -3,8 +3,7 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import Response, FileResponse
-from starlette.requests import Request
+from starlette.responses import Response
 from database import Database
 from dotenv import load_dotenv
 
