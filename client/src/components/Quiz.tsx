@@ -59,7 +59,7 @@ export default function Quiz(props: { params: QuizProps[] | undefined }): JSX.El
     return (
         <main className={"grid grid-rows-2 gap-8 w-4/6 h-4/6"}>
             <section
-                className={"rounded-lg bg-stone-200 p-4 shadow-lg border border-stone-700 h-fit flex items-center justify-evenly gap-4"}>
+                className={"rounded-lg bg-gradient-to-br from-stone-200 to-stone-100 p-4 shadow-lg h-fit flex items-center justify-evenly gap-4"}>
                 <button className={Buttons.ARROW} onClick={handlePrevious}>
                     <img src={Arrows.LEFT_ARROW} alt={"left arrow"}/>
                 </button>
