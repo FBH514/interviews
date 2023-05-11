@@ -10,10 +10,10 @@ async function GET(endpoint: string): Promise<any> {
 
 export default function App(): JSX.Element {
 
-    const {data: content} = useQuery<QuizProps>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT))
+    const {data: content} = useQuery<QuizProps[]>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT))
 
     return (
-        <div className={"flex items-center justify-center min-h-screen bg-gradient-to-br from-sky-300 to-purple-500"}>
+        <div className={"App flex items-center justify-center min-h-screen bg-gradient-to-br from-sky-300 to-purple-500"}>
             <Quiz params={content}/>
         </div>
     );

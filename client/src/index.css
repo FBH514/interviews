@@ -3,3 +3,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+    background: #333;
+}
+
+.App {
+    position: relative;
+    z-index: 1;
+}
+
+.App:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: url("https://images.unsplash.com/photo-1682361370648-521dce49abb2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80") no-repeat center;
+    filter: grayscale(100%);
+    opacity: 0.3;
+    mix-blend-mode: multiply;
+    z-index: -1;
+}
