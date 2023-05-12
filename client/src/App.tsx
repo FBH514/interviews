@@ -1,6 +1,6 @@
 import {QuizProps} from "./components/Interfaces.tsx";
 import {Endpoints, QueryKeys} from "./components/Endpoints.tsx";
-import {useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import Quiz from "./components/Quiz.tsx";
 import Navbar from "./components/Navbar.tsx";
 import {useEffect, useState} from "react";
@@ -14,7 +14,17 @@ async function GET(endpoint: string): Promise<any> {
 
 export default function App(): JSX.Element {
 
+    const queryCache = useQueryClient();
     const [show, setShow] = useState<boolean>(false);
+    const [topic, setTopic] = useState<string>("");
+    const [content, setContent] = useState<QuizProps[]>([]);
+
+    async function handleTopicClick(topic: string) {
+        const response = await GET(`${Endpoints.TOPICS}/${topic}`);
+        await handleChange();
+        setTopic(topic);
+        setContent(response);
+    }
 
     useEffect(() => {
         function handler(e: KeyboardEvent) {
@@ -27,11 +37,18 @@ export default function App(): JSX.Element {
         return () => window.removeEventListener("keydown", handler);
     });
 
-    const {data: content} = useQuery<QuizProps[]>(QueryKeys.CONTENT, () => GET(Endpoints.CONTENT));
     const {data: topics} = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS));
+    const {mutate} = useMutation(Endpoints.CONTENT, () => GET(`${Endpoints.CONTENT}/${topic}`), {
+        onSuccess: (data) => queryCache.setQueryData(QueryKeys.CONTENT, data),
+        onError: (error) => console.log(error)
+    });
 
     function handleClick(): void {
         setShow(!show);
+    }
+
+    async function handleChange(): Promise<void> {
+        await mutate();
     }
 
     function Menu(): JSX.Element {
@@ -43,7 +60,7 @@ export default function App(): JSX.Element {
                     </div>
                 ) : (
                     <div className={NavClasses.MENU} onClick={handleClick}>
-                        <img src={Nav.OPEN} alt={"open"} className={"p-2 bg-stone-100 rounded-md shadow-lg"}/>
+                        <img src={Nav.OPEN} alt={"open"} className={"p-2 bg-stone-100 rounded-md shadow-md"}/>
                     </div>
                 )
 
@@ -55,8 +72,8 @@ export default function App(): JSX.Element {
              style={show ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateColumns: "1fr"}}
         >
             <Menu/>
-            {show ? <Navbar topics={topics}/> : <></>}
-            <Quiz params={content}/>
+            {show ? <Navbar topics={topics} onTopicClick={handleTopicClick}/> : null}
+            <Quiz params={content} topic={topic}/>
         </div>
     );
 }

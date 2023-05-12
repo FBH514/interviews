@@ -42,14 +42,16 @@ async def root() -> str:
     pass
 
 
-# GET http://localhost:8000/interview/v1/content
+# GET http://localhost:8000/interview/v1/content/topics/{language}
 @cache(15)
-@app.get(f"/{Project.NAME}/{Project.VERSION}/content")
-async def content(response: Response) -> list:
+@app.get("/interview/v1/content/topics/{language}")
+async def content(response: Response, language: str) -> list:
     """"""
     data = []
     with Database(os.getenv("DB_NAME")) as db:
-        for row in db.execute(os.getenv("ALL")):
+        if language.title() not in [row[1] for row in db.execute(os.getenv("TOPICS"))]:
+            return [{"question": "Make a selection.", "answer": "Topics are available in the top left menu."}]
+        for row in db.execute(f"{os.getenv('ALL')}{language}"):
             data.append({
                 'question': row[1],
                 'answer': row[2]
