@@ -1,7 +1,7 @@
 import {QuizProps} from "./Interfaces.tsx";
-import {useEffect, useMemo, useRef, useState} from "react";
 import {Arrows} from "./Icons.tsx";
 import {ButtonClasses} from "./Classes.tsx";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 function randomizeContent(data: QuizProps[]): void {
     if (!data) return;
