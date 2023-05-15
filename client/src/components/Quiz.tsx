@@ -1,23 +1,22 @@
-import {QuizProps} from "./Interfaces.tsx";
-import {Arrows} from "./Icons.tsx";
-import {ButtonClasses} from "./Classes.tsx";
-import {useEffect, useMemo, useRef, useState} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { QuizProps } from "../types/Interfaces.tsx";
+import { Arrows } from "../constants/Icons.tsx";
+import { ButtonStyles, QuizStyles } from "../constants/Classes.tsx";
+import useWindowSize from "../hooks/useWindowSize.tsx";
 
 function randomizeContent(data: QuizProps[]): void {
-    if (!data) return;
     for (let index = data.length - 1; index > 0; index--) {
-        const value = Math.floor(Math.random() * index)
-        const temp = data[index]
-        data[index] = data[value]
-        data[value] = temp
+        const value = Math.floor(Math.random() * index);
+        [data[index], data[value]] = [data[value], data[index]];
     }
 }
 
-export default function Quiz(props: { params: QuizProps[] | undefined, topic: string}): JSX.Element {
+export default function Quiz(props: { params: QuizProps[] | undefined, topic: string }): JSX.Element {
 
     const content = useMemo(() => props.params || [], [props.params]);
     const [show, setShow] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(0);
+    const mobile = useWindowSize();
     const leftArrowRef = useRef<HTMLButtonElement>(null);
     const rightArrowRef = useRef<HTMLButtonElement>(null);
 
@@ -42,40 +41,37 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
         return () => document.removeEventListener("keydown", handler);
     })
 
-    function handleClick(): void {
-        setShow(!show)
+    const handleClick = (): void => setShow(!show);
+
+    const handleNext = (): void => {
+        setIndex((index + 1) % content.length);
+        setShow(false);
+        rightArrowRef.current?.click();
     }
 
-    function handleNext(): void {
-        const isLast = index === content.length - 1;
-        isLast ? setIndex(0) : setIndex(index + 1);
-        if (show) setShow(!show);
-        if (rightArrowRef.current) rightArrowRef.current.click();
-    }
-
-    function handlePrevious(): void {
-        const isFirst = index === 0;
-        isFirst ? setIndex(content.length - 1) : setIndex(index - 1);
-        if (show) setShow(!show);
-        if (leftArrowRef.current) leftArrowRef.current.click();
+    const handlePrevious = (): void => {
+        setIndex(index === 0 ? content.length - 1 : index - 1);
+        setShow(false);
+        leftArrowRef.current?.click();
     }
 
     return (
-        <main className={"grid grid-rows-3 gap-8 w-9/12 h-5/6 justify-items-center items-center p-4"}
+        <main className={!mobile ? QuizStyles.PARENT_DESKTOP : QuizStyles.PARENT_MOBILE}
               style={{gridTemplateRows: "fit-content(100%) fit-content(100%) 1fr"}}>
             <section>
                 <h1 className={"text-4xl text-stone-100 font-bold text-center"}>{props.topic} Questions</h1>
             </section>
             <section
                 className={"rounded-lg bg-gradient-to-br from-stone-200 to-stone-100 p-4 shadow-md h-fit w-full flex items-center justify-evenly gap-4"}>
-                <button className={ButtonClasses.ARROW} onClick={handlePrevious} ref={leftArrowRef}>
+                <button className={ButtonStyles.ARROW} onClick={handlePrevious} ref={leftArrowRef}>
                     <img src={Arrows.LEFT_ARROW} alt={"left arrow"}/>
                 </button>
-                <header className={"grid grid-cols-2 items-center gap-4 text-center w-full"} style={{gridTemplateColumns: "1fr fit-content(100%)"}}>
+                <header className={!mobile ? QuizStyles.PROMPT_DESKTOP : QuizStyles.PROMPT_MOBILE}
+                        style={!mobile ? {gridTemplateColumns: "1fr fit-content(100%)"} : {gridTemplateColumns: "1fr"}}>
                     <h2 className={"text-2xl text-stone-700 font-bold"}>{content[index]?.question}</h2>
-                    <button className={ButtonClasses.SHOW} onClick={handleClick}>{"Show"}</button>
+                    <button className={ButtonStyles.SHOW} onClick={handleClick}>{"Show"}</button>
                 </header>
-                <button className={ButtonClasses.ARROW} onClick={handleNext} ref={rightArrowRef}>
+                <button className={ButtonStyles.ARROW} onClick={handleNext} ref={rightArrowRef}>
                     <img src={Arrows.RIGHT_ARROW} alt={"right arrow"}/>
                 </button>
             </section>

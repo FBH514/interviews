@@ -1,11 +1,14 @@
-import {QuizProps} from "./components/Interfaces.tsx";
-import {Endpoints, QueryKeys} from "./components/Endpoints.tsx";
-import {ContainerClasses, NavClasses} from "./components/Classes.tsx";
-import {Nav} from "./components/Icons.tsx";
+import {useEffect, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import Quiz from "./components/Quiz.tsx";
 import Navbar from "./components/Navbar.tsx";
-import {useEffect, useState} from "react";
+import useCache from "./hooks/useCache.tsx";
+import {QuizProps} from "./types/Interfaces.tsx";
+import {Endpoints, QueryKeys} from "./constants/Endpoints.tsx";
+import {AppStyles, NavStyles} from "./constants/Classes.tsx";
+import {Nav} from "./constants/Icons.tsx";
+import {CacheKeys} from "./constants/CacheKeys.tsx";
+import useWindowSize from "./hooks/useWindowSize.tsx";
 
 async function GET(endpoint: string): Promise<any> {
     const response = await fetch(endpoint);
@@ -17,18 +20,42 @@ async function GET(endpoint: string): Promise<any> {
 }
 
 export default function App(): JSX.Element {
-
     const queryCache = useQueryClient();
     const [show, setShow] = useState<boolean>(false);
-    const [topic, setTopic] = useState<string>("");
     const [content, setContent] = useState<QuizProps[]>([]);
+    const [data, setData] = useCache<string>(CacheKeys.TOPIC);
+    const mobile = useWindowSize();
+
+    const { data: topics } = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS));
+
+    const { mutate } = useMutation(
+        Endpoints.CONTENT,
+        () => GET(`${Endpoints.CONTENT}/${data}`),
+        {
+            onSuccess: (data) => queryCache.setQueryData(QueryKeys.CONTENT, data),
+            onError: (error) => console.log(error),
+        }
+    );
 
     async function handleTopicClick(topic: string) {
         const response = await GET(`${Endpoints.TOPICS}/${topic}`);
-        await handleChange();
-        setTopic(topic);
+        setData(topic);
         setContent(response);
+        await mutate();
     }
+
+    function handleClick(): void {
+        setShow(!show);
+    }
+
+    useEffect(() => {
+        async function handler() {
+            const response = await GET(`${Endpoints.TOPICS}/${data}`);
+            setContent(response);
+        }
+
+        handler();
+    }, [data]);
 
     useEffect(() => {
         function handler(e: KeyboardEvent) {
@@ -41,50 +68,21 @@ export default function App(): JSX.Element {
         return () => window.removeEventListener("keydown", handler);
     });
 
-    const {data: topics} = useQuery<string[]>(QueryKeys.TOPICS, async () => {
-        return await GET(Endpoints.TOPICS);
-    });
-
-    const {mutate} = useMutation(
-        Endpoints.CONTENT,
-        async () => {
-            return await GET(`${Endpoints.CONTENT}/${topic}`);
-        },
-        {
-            onSuccess: (data) => queryCache.setQueryData(QueryKeys.CONTENT, data),
-            onError: (error) => console.log(error),
-        }
-    );
-
-    function handleClick(): void {
-        setShow(!show);
-    }
-
-    async function handleChange(): Promise<void> {
-        await mutate();
-    }
-
     function Menu(): JSX.Element {
         return (
-            show ? (
-                <div className={NavClasses.MENU} onClick={handleClick}>
-                    <img src={Nav.CLOSE} alt={"close"} className={"p-2 bg-transparent"}/>
-                </div>
-            ) : (
-                <div className={NavClasses.MENU} onClick={handleClick}>
-                    <img src={Nav.OPEN} alt={"open"} className={"p-2 bg-stone-100 rounded-md shadow-md"}/>
-                </div>
-            )
+            <div className={NavStyles.MENU} onClick={handleClick}>
+                <img src={show ? Nav.CLOSE : Nav.OPEN} alt={show ? "close" : "open"} className={"p-2 bg-transparent"}/>
+            </div>
         );
     }
 
     return (
-        <div className={show ? ContainerClasses.PARENT_SHOW : ContainerClasses.PARENT}
-             style={show ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateColumns: "1fr"}}
+        <div className={show ? (!mobile ? AppStyles.PARENT_SHOW_DESKTOP : AppStyles.PARENT_SHOW_MOBILE) : AppStyles.PARENT_DESKTOP}
+             style={show ? (!mobile ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateRows: "fit-content(100%) 1fr"}) : {gridTemplateColumns: "1fr"}}
         >
             <Menu/>
-            {show ? <Navbar topics={topics} onTopicClick={handleTopicClick}/> : null}
-            <Quiz params={content} topic={topic}/>
+            {show && <Navbar topics={topics} onTopicClick={handleTopicClick}/>}
+            <Quiz params={content} topic={data}/>
         </div>
     );
 }
