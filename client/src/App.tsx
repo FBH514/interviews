@@ -8,7 +8,9 @@ import {Endpoints, QueryKeys} from "./constants/Endpoints.tsx";
 import {AppStyles, NavStyles} from "./constants/Classes.tsx";
 import {Nav} from "./constants/Icons.tsx";
 import {CacheKeys} from "./constants/CacheKeys.tsx";
+import {CACHE} from "./utils/Cache.tsx";
 import useWindowSize from "./hooks/useWindowSize.tsx";
+import {Hotkeys} from "./components/Hotkeys.tsx";
 
 async function GET(endpoint: string): Promise<any> {
     const response = await fetch(endpoint);
@@ -21,14 +23,16 @@ async function GET(endpoint: string): Promise<any> {
 
 export default function App(): JSX.Element {
     const queryCache = useQueryClient();
-    const [show, setShow] = useState<boolean>(false);
+    const [showMenu, setShowMenu] = useState<boolean>(false);
+    const [showHotkeys, setShowHotkeys] = useState<boolean>(false);
     const [content, setContent] = useState<QuizProps[]>([]);
     const [data, setData] = useCache<string>(CacheKeys.TOPIC);
     const mobile = useWindowSize();
 
-    const { data: topics } = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS));
+    const {data: topics} = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS), CACHE);
+    const {data: hotkeys} = useQuery<string[]>(QueryKeys.HOTKEYS, () => GET(Endpoints.HOTKEYS), CACHE);
 
-    const { mutate } = useMutation(
+    const {mutate} = useMutation(
         Endpoints.CONTENT,
         () => GET(`${Endpoints.CONTENT}/${data}`),
         {
@@ -45,7 +49,7 @@ export default function App(): JSX.Element {
     }
 
     function handleClick(): void {
-        setShow(!show);
+        setShowMenu(!showMenu);
     }
 
     useEffect(() => {
@@ -60,7 +64,7 @@ export default function App(): JSX.Element {
     useEffect(() => {
         function handler(e: KeyboardEvent) {
             if (e.key === "Escape") {
-                setShow(!show);
+                setShowMenu(!showMenu);
             }
         }
 
@@ -71,17 +75,20 @@ export default function App(): JSX.Element {
     function Menu(): JSX.Element {
         return (
             <div className={NavStyles.MENU} onClick={handleClick}>
-                <img src={show ? Nav.CLOSE : Nav.OPEN} alt={show ? "close" : "open"} className={"p-2 bg-transparent"}/>
+                <img src={showMenu ? Nav.CLOSE : Nav.OPEN} alt={showMenu ? "close" : "open"}
+                     className={"p-2 bg-transparent"}/>
             </div>
         );
     }
 
     return (
-        <div className={show ? (!mobile ? AppStyles.PARENT_SHOW_DESKTOP : AppStyles.PARENT_SHOW_MOBILE) : AppStyles.PARENT_DESKTOP}
-             style={show ? (!mobile ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateRows: "fit-content(100%) 1fr"}) : {gridTemplateColumns: "1fr"}}
+        <div
+            className={showMenu ? (!mobile ? AppStyles.PARENT_SHOW_DESKTOP : AppStyles.PARENT_SHOW_MOBILE) : AppStyles.PARENT_DESKTOP}
+            style={showMenu ? (!mobile ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateRows: "fit-content(100%) 1fr"}) : {gridTemplateColumns: "1fr"}}
         >
             <Menu/>
-            {show && <Navbar topics={topics} onTopicClick={handleTopicClick}/>}
+            <Hotkeys showHotkeys={showHotkeys} setShowHotkeys={setShowHotkeys} hotkeys={hotkeys}/>
+            {showMenu && <Navbar topics={topics} onTopicClick={handleTopicClick}/>}
             <Quiz params={content} topic={data}/>
         </div>
     );

@@ -105,3 +105,16 @@ async def content(response: Response, language: str) -> list:
                 'answer': row[2]
             })
         return data
+
+
+# GET http://localhost:8000/interview/v1/hotkeys
+@cache(Project.CACHE)
+@app.get(f"/{Project.NAME}/{Project.VERSION}/hotkeys")
+async def hotkeys(response: Response) -> list:
+    """"""
+    with Database(os.getenv("DB_NAME")) as db:
+        return [row[1] for row in db.execute(os.getenv("HOTKEYS"))]
+
+
+
+

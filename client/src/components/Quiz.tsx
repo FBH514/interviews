@@ -69,7 +69,7 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
                 <header className={!mobile ? QuizStyles.PROMPT_DESKTOP : QuizStyles.PROMPT_MOBILE}
                         style={!mobile ? {gridTemplateColumns: "1fr fit-content(100%)"} : {gridTemplateColumns: "1fr"}}>
                     <h2 className={"text-2xl text-stone-700 font-bold"}>{content[index]?.question}</h2>
-                    <button className={ButtonStyles.SHOW} onClick={handleClick}>{"Show"}</button>
+                    <button className={ButtonStyles.SHOW} onClick={handleClick}>{show ? "Close" : "Show"}</button>
                 </header>
                 <button className={ButtonStyles.ARROW} onClick={handleNext} ref={rightArrowRef}>
                     <img src={Arrows.RIGHT_ARROW} alt={"right arrow"}/>
