@@ -1,7 +1,7 @@
 import {ButtonStyles} from "../constants/Classes.tsx";
 import {HotkeysProps} from "../types/Interfaces.tsx";
 
-export function Hotkeys({showHotkeys: showHotkeys, setShowHotkeys, hotkeys}: HotkeysProps): JSX.Element {
+export function Hotkeys({showHotkeys, setShowHotkeys, hotkeys}: HotkeysProps): JSX.Element {
     return (
         <div className={"absolute bottom-0 left-50 p-4 flex flex-col gap-4 items-center"}>
             {showHotkeys ? (
