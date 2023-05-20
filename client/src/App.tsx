@@ -3,14 +3,14 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import Quiz from "./components/Quiz.tsx";
 import Navbar from "./components/Navbar.tsx";
 import useCache from "./hooks/useCache.tsx";
-import {QuizProps} from "./types/Interfaces.tsx";
+import {HotkeysProps, QuizProps} from "./types/Interfaces.tsx";
 import {Endpoints, QueryKeys} from "./constants/Endpoints.tsx";
 import {AppStyles, NavStyles} from "./constants/Classes.tsx";
-import {Nav} from "./constants/Icons.tsx";
+import {Keys, Nav} from "./constants/Icons.tsx";
 import {CacheKeys} from "./constants/CacheKeys.tsx";
 import {CACHE} from "./utils/Cache.tsx";
 import useWindowSize from "./hooks/useWindowSize.tsx";
-import {Hotkeys} from "./components/Hotkeys.tsx";
+import {Hotkeys} from "./components/Tooltips.tsx";
 
 async function GET(endpoint: string): Promise<any> {
     const response = await fetch(endpoint);
@@ -21,16 +21,34 @@ async function GET(endpoint: string): Promise<any> {
     return await response.json();
 }
 
+const hotkeys: HotkeysProps[] = [
+    {
+        hotkey: "Show/Hide Menu",
+        icon: Keys.ESCAPE
+    },
+    {
+        hotkey: "Show/Hide Solution",
+        icon: Keys.ENTER
+    },
+    {
+        hotkey: "Previous Question",
+        icon: Keys.LEFT_ARROW
+    },
+    {
+        hotkey: "Next Question",
+        icon: Keys.RIGHT_ARROW
+    }
+]
+
 export default function App(): JSX.Element {
     const queryCache = useQueryClient();
     const [showMenu, setShowMenu] = useState<boolean>(false);
-    const [showHotkeys, setShowHotkeys] = useState<boolean>(false);
     const [content, setContent] = useState<QuizProps[]>([]);
     const [data, setData] = useCache<string>(CacheKeys.TOPIC);
     const mobile = useWindowSize();
 
     const {data: topics} = useQuery<string[]>(QueryKeys.TOPICS, () => GET(Endpoints.TOPICS), CACHE);
-    const {data: hotkeys} = useQuery<string[]>(QueryKeys.HOTKEYS, () => GET(Endpoints.HOTKEYS), CACHE);
+    // const {data: hotkeys} = useQuery<string[]>(QueryKeys.HOTKEYS, () => GET(Endpoints.HOTKEYS), CACHE);
 
     const {mutate} = useMutation(
         Endpoints.CONTENT,
@@ -87,9 +105,13 @@ export default function App(): JSX.Element {
             style={showMenu ? (!mobile ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateRows: "fit-content(100%) 1fr"}) : {gridTemplateColumns: "1fr"}}
         >
             <Menu/>
-            <Hotkeys showHotkeys={showHotkeys} setShowHotkeys={setShowHotkeys} hotkeys={hotkeys}/>
             {showMenu && <Navbar topics={topics} onTopicClick={handleTopicClick}/>}
             <Quiz params={content} topic={data}/>
+            <Hotkeys hotkeys={hotkeys} className={"top-0 right-0 absolute"}>
+                <button className={"p-4"}>
+                    <img src={Keys.INFO} alt="info"/>
+                </button>
+            </Hotkeys>
         </div>
     );
 }

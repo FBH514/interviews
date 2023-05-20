@@ -9,7 +9,6 @@ export interface NavProps {
 }
 
 export interface HotkeysProps {
-    showHotkeys: boolean;
-    setShowHotkeys: (value: boolean) => void;
-    hotkeys: string[] | undefined;
+    hotkey: string;
+    icon?: string;
 }

@@ -59,7 +59,7 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
         <main className={!mobile ? QuizStyles.PARENT_DESKTOP : QuizStyles.PARENT_MOBILE}
               style={{gridTemplateRows: "fit-content(100%) fit-content(100%) 1fr"}}>
             <section>
-                <h1 className={"text-4xl text-stone-100 font-bold text-center"}>{props.topic} Questions</h1>
+                <h1 className={"text-4xl text-zinc-900 font-bold text-center"}>{props.topic} Questions</h1>
             </section>
             <section
                 className={"rounded-lg bg-gradient-to-br from-stone-200 to-stone-100 p-4 shadow-md h-fit w-full flex items-center justify-evenly gap-4"}>
@@ -68,7 +68,7 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
                 </button>
                 <header className={!mobile ? QuizStyles.PROMPT_DESKTOP : QuizStyles.PROMPT_MOBILE}
                         style={!mobile ? {gridTemplateColumns: "1fr fit-content(100%)"} : {gridTemplateColumns: "1fr"}}>
-                    <h2 className={"text-2xl text-stone-700 font-bold"}>{content[index]?.question}</h2>
+                    <h2 className={"text-2xl text-zinc-900 font-bold"}>{content[index]?.question}</h2>
                     <button className={ButtonStyles.SHOW} onClick={handleClick}>{show ? "Close" : "Show"}</button>
                 </header>
                 <button className={ButtonStyles.ARROW} onClick={handleNext} ref={rightArrowRef}>
@@ -76,9 +76,9 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
                 </button>
             </section>
             <section
-                className={"flex items-center justify-center text-3xl text-stone-700 font-bold text-center h-fit"}>
+                className={"flex items-center justify-center text-3xl text-zinc-900 font-bold text-center h-fit"}>
                 {show ? (
-                    <header className={"flex flex-col items-center justify-center gap-4"}>
+                    <header className={"flex flex-col items-center justify-center gap-4 p-4"}>
                         <h3 className={"font-thin"}>{"Solution"}</h3>
                         <h2>{content[index]?.answer}</h2>
                     </header>

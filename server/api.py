@@ -44,37 +44,37 @@ def cache(seconds: int) -> callable:
     return decorator
 
 
-# GET http://localhost:8000/
+# GET http://localhost:8001/
 @cache(Project.CACHE)
 @app.get("/")
 async def root() -> str:
     """
     Defines the API root
-    GET http://localhost:8000/
+    GET http://localhost:8001/
 
     Find out about the currently available topics
-    GET http://localhost:8000/interview/v1/content/topics
+    GET http://localhost:8001/interview/v1/content/topics
 
     Target your preferred topic from the current list of topics
-    GET http://localhost:8000/interview/v1/content/topics/{language}
+    GET http://localhost:8001/interview/v1/content/topics/{language}
 
     """
     return """
     Find out about the currently available topics
-    GET http://localhost:8000/interview/v1/content/topics
+    GET http://localhost:8001/interview/v1/content/topics
 
     Target your preferred topic from the current list of topics
-    GET http://localhost:8000/interview/v1/content/topics/{language}
+    GET http://localhost:8001/interview/v1/content/topics/{language}
     """
 
 
-# GET http://localhost:8000/interview/v1/content/topics
+# GET http://localhost:8001/interview/v1/content/topics
 @cache(Project.CACHE)
 @app.get(f"/{Project.NAME}/{Project.VERSION}/content/topics")
 async def topics(response: Response) -> list[str]:
     """
     Find out about the currently available topics
-    GET http://localhost:8000/interview/v1/content/topics
+    GET http://localhost:8001/interview/v1/content/topics
     :param response: Response
     :return: list[str]
     """
@@ -85,7 +85,7 @@ async def topics(response: Response) -> list[str]:
         return data
 
 
-# GET http://localhost:8000/interview/v1/content/topics/{language}
+# GET http://localhost:8001/interview/v1/content/topics/{language}
 @cache(Project.CACHE)
 @app.get("/interview/v1/content/topics/{language}")
 async def content(response: Response, language: str) -> list:
@@ -107,14 +107,10 @@ async def content(response: Response, language: str) -> list:
         return data
 
 
-# GET http://localhost:8000/interview/v1/hotkeys
+# GET http://localhost:8001/interview/v1/hotkeys
 @cache(Project.CACHE)
 @app.get(f"/{Project.NAME}/{Project.VERSION}/hotkeys")
 async def hotkeys(response: Response) -> list:
     """"""
     with Database(os.getenv("DB_NAME")) as db:
         return [row[1] for row in db.execute(os.getenv("HOTKEYS"))]
-
-
-
-

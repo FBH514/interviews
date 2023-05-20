@@ -21,9 +21,16 @@ body {
     left: 0;
     height: 100%;
     width: 100%;
-    background: url("https://images.unsplash.com/photo-1682361370648-521dce49abb2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80") no-repeat center;
+    background: url("https://images.unsplash.com/photo-1682361370648-521dce49abb2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80") no-repeat fixed;
+    background-size: cover;
     filter: grayscale(100%);
     opacity: 0.3;
     mix-blend-mode: multiply;
     z-index: -1;
+}
+
+@media screen and (max-width: 1023px) {
+    .App:after {
+        background: none;
+    }
 }
