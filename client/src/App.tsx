@@ -6,11 +6,12 @@ import useCache from "./hooks/useCache.tsx";
 import {HotkeysProps, QuizProps} from "./types/Interfaces.tsx";
 import {Endpoints, QueryKeys} from "./constants/Endpoints.tsx";
 import {AppStyles, NavStyles} from "./constants/Classes.tsx";
-import {Keys, Nav} from "./constants/Icons.tsx";
+import {Keys, Logo, Nav} from "./constants/Icons.tsx";
 import {CacheKeys} from "./constants/CacheKeys.tsx";
 import {CACHE} from "./utils/Cache.tsx";
 import useWindowSize from "./hooks/useWindowSize.tsx";
 import {Hotkeys} from "./components/Tooltips.tsx";
+import {motion} from "framer-motion";
 
 async function GET(endpoint: string): Promise<any> {
     const response = await fetch(endpoint);
@@ -63,6 +64,7 @@ export default function App(): JSX.Element {
         const response = await GET(`${Endpoints.TOPICS}/${topic}`);
         setData(topic);
         setContent(response);
+        handleClick();
         await mutate();
     }
 
@@ -100,18 +102,26 @@ export default function App(): JSX.Element {
     }
 
     return (
-        <div
+        <motion.div
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{duration: 0.5}}
             className={showMenu ? (!mobile ? AppStyles.PARENT_SHOW_DESKTOP : AppStyles.PARENT_SHOW_MOBILE) : AppStyles.PARENT_DESKTOP}
             style={showMenu ? (!mobile ? {gridTemplateColumns: "fit-content(100%) 1fr"} : {gridTemplateRows: "fit-content(100%) 1fr"}) : {gridTemplateColumns: "1fr"}}
         >
             <Menu/>
             {showMenu && <Navbar topics={topics} onTopicClick={handleTopicClick}/>}
             <Quiz params={content} topic={data}/>
-            <Hotkeys hotkeys={hotkeys} className={"top-0 right-0 absolute"}>
-                <button className={"p-4"}>
+            <Hotkeys hotkeys={hotkeys} className={"bottom-0 right-0 absolute"}>
+                <button className={"p-4 flex items-center justify-center gap-2"}>
+                    <h2 className={"text-sm font-thin"}>Hotkeys</h2>
                     <img src={Keys.INFO} alt="info"/>
                 </button>
             </Hotkeys>
-        </div>
+            <div className={"absolute top-0 right-0 p-4 flex items-center"}>
+                <h2 className={"text-2xl font-thin"}>Hike</h2>
+                <img src={Logo.NAV} alt="pine"/>
+            </div>
+        </motion.div>
     );
 }

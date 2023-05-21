@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { QuizProps } from "../types/Interfaces.tsx";
-import { Arrows } from "../constants/Icons.tsx";
-import { ButtonStyles, QuizStyles } from "../constants/Classes.tsx";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {QuizProps} from "../types/Interfaces.tsx";
+import {Arrows} from "../constants/Icons.tsx";
+import {ButtonStyles, QuizStyles} from "../constants/Classes.tsx";
 import useWindowSize from "../hooks/useWindowSize.tsx";
+import {motion, AnimatePresence} from "framer-motion";
 
 function randomizeContent(data: QuizProps[]): void {
     for (let index = data.length - 1; index > 0; index--) {
@@ -56,8 +57,12 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
     }
 
     return (
-        <main className={!mobile ? QuizStyles.PARENT_DESKTOP : QuizStyles.PARENT_MOBILE}
-              style={{gridTemplateRows: "fit-content(100%) fit-content(100%) 1fr"}}>
+        <motion.main
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{duration: 1}}
+            className={!mobile ? QuizStyles.PARENT_DESKTOP : QuizStyles.PARENT_MOBILE}
+            style={{gridTemplateRows: "fit-content(100%) fit-content(100%) 1fr"}}>
             <section>
                 <h1 className={"text-4xl text-zinc-900 font-bold text-center"}>{props.topic} Questions</h1>
             </section>
@@ -68,14 +73,27 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
                 </button>
                 <header className={!mobile ? QuizStyles.PROMPT_DESKTOP : QuizStyles.PROMPT_MOBILE}
                         style={!mobile ? {gridTemplateColumns: "1fr fit-content(100%)"} : {gridTemplateColumns: "1fr"}}>
-                    <h2 className={"text-2xl text-zinc-900 font-bold"}>{content[index]?.question}</h2>
+                    <AnimatePresence mode={"wait"}>
+                        <motion.h2 className={"text-2xl text-zinc-900 font-bold"}
+                                   initial={{opacity: 0}}
+                                   animate={{opacity: 1}}
+                                   transition={{duration: 0.3}}
+                                   exit={{opacity: 0}}
+                                   key={index}
+                        >
+                            {content[index]?.question}
+                        </motion.h2>
+                    </AnimatePresence>
                     <button className={ButtonStyles.SHOW} onClick={handleClick}>{show ? "Close" : "Show"}</button>
                 </header>
                 <button className={ButtonStyles.ARROW} onClick={handleNext} ref={rightArrowRef}>
                     <img src={Arrows.RIGHT_ARROW} alt={"right arrow"}/>
                 </button>
             </section>
-            <section
+            <motion.section
+                initial={{opacity: 0}}
+                animate={{opacity: show ? 1 : 0}}
+                transition={{duration: 0.5}}
                 className={"flex items-center justify-center text-3xl text-zinc-900 font-bold text-center h-fit"}>
                 {show ? (
                     <header className={"flex flex-col items-center justify-center gap-4 p-4"}>
@@ -83,7 +101,7 @@ export default function Quiz(props: { params: QuizProps[] | undefined, topic: st
                         <h2>{content[index]?.answer}</h2>
                     </header>
                 ) : (<></>)}
-            </section>
-        </main>
+            </motion.section>
+        </motion.main>
     )
 }

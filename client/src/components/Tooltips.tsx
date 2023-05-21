@@ -14,7 +14,7 @@ export const Hotkeys = ({hotkeys, children, className}: {
             <div className={"relative"} onMouseLeave={() => setShow(false)} onMouseEnter={() => setShow(true)}>
                 {children}
                 {show && <div
-                    className={"p-4 rounded-lg bg-zinc-900 text-zinc-100 text-xl absolute right-full top-1/2 mr-2 flex flex-col gap-4 min-w-max whitespace-nowrap"}>
+                    className={"p-4 rounded-lg bg-zinc-900 text-zinc-100 text-xl absolute right-full bottom-1/2 mr-2 flex flex-col gap-4 min-w-max whitespace-nowrap"}>
                     {hotkeys?.map((item, index) => (
                         <div key={index} className={"flex items-center gap-2"}>
                             <img src={item.icon} alt={""}/>

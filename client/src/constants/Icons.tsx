@@ -13,5 +13,9 @@ export enum Keys {
     RIGHT_ARROW = "https://img.icons8.com/ios/32/f4f4f5/right-squared--v2.png",
     LEFT_ARROW = "https://img.icons8.com/ios/32/f4f4f5/left-squared--v2.png",
     ENTER = "https://img.icons8.com/ios/32/f4f4f5/enter-mac-key.png",
-    INFO = "https://img.icons8.com/ios/32/18181b/info-squared.png"
+    INFO = "https://img.icons8.com/ios/16/18181b/info-squared.png"
+}
+
+export enum Logo {
+    NAV = "https://img.icons8.com/glyph-neue/64/18181b/forest.png"
 }
